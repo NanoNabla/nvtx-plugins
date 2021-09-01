@@ -122,9 +122,9 @@ class NvtxStartOp : public OpKernel {
       attr.messageType = NVTX_MESSAGE_TYPE_ASCII;
       attr.message.ascii = message.c_str();
 
-      marker_id = nvtxDomainRangeStartEx(domain_handle, &attr);
+      marker_id = nvtxDomainRangePushEx(domain_handle, &attr);
     } else {
-      marker_id = nvtxRangeStart(message.c_str());
+      marker_id = nvtxRangePushA(message.c_str());
     }
 
     // push marker_id and domain_handle to outputs 1 and 2
@@ -168,9 +168,9 @@ class NvtxEndOp : public OpKernel {
       marker_t->scalar<int64>()());
 
     if (domain_handle != NVTX_DEFAULT_DOMAIN) {
-      nvtxDomainRangeEnd(domain_handle, marker_id);
+      nvtxDomainRangePop(domain_handle);
     } else {
-      nvtxRangeEnd(marker_id);
+      nvtxRangePop();
     }
 
     Tensor *output_null_output = nullptr;
